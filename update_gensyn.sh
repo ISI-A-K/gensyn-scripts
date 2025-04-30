@@ -37,11 +37,11 @@ pip check
 sed -i 's/^[[:space:]]*PS1=/export PS1=/' ~/.bashrc
 sed -i 's/\\[ -z \\\"\\$PS1\\\" \\]/[ -z \"${PS1-}\" ]/' ~/.bashrc
 sed -i 's/\\[ -z \\\"\\$debian_chroot\\\" \\]/[ -z \"${debian_chroot:-}\" ]/' ~/.bashrc
-echo \"ulimit -n 65535\" >> ~/.bashrc
+echo 'if [ "$SHELL" = "/bin/bash" ]; then ulimit -n 65535; fi' >> ~/.bashrc
 source ~/.bashrc
 
 # 6. run_rl_swarm.sh の修正
-sed -i 's/open http:\\/\\/localhost:3000/echo \"Server running at http:\\/\\/localhost:3000. Please open this URL in your browser.\"/' run_rl_swarm.sh
+sed -i 's|open http://localhost:3000|echo "Server running at http://localhost:3000. Please open this URL in your browser."|' run_rl_swarm.sh
 
 # 7. 実行案内
 echo \"✅ アップデート完了。以下の手順で再起動してください：\"
