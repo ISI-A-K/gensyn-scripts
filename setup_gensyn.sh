@@ -1,64 +1,68 @@
 #!/bin/bash
 
 # =========================================
-# Gensyn Node CPU-Only Mode Setup Script
-# Author: ChatGPT (2025-04)
+# Gensyn Node Setup Script (Full Updated Version)
 # =========================================
 
-# 1. 基本パッケージのインストール
+# 1. 必要パッケージのインストール
 sudo apt update && sudo apt install -y \
-  git python3 python3-pip python3-venv curl tmux build-essential \
-  nodejs
+  git python3 python3-pip python3-venv curl tmux build-essential nodejs
 
-# Node.js（v20系）をインストール
+# 2. Node.js v20 のセットアップ
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
 node -v
 
-# 2. Cloudflared のインストール（GUIログインのために必要）
+# 3. Cloudflared のインストール（GUIログイン用）
 curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared
 chmod +x cloudflared
 sudo mv cloudflared /usr/local/bin/
 cloudflared --version
 
-# 3. Swap の作成（初回のみでOK）
+# 4. Swap 設定（RAMが少ない場合に備えて）
 sudo fallocate -l 8G /swapfile
 sudo chmod 600 /swapfile
 sudo mkswap /swapfile
 sudo swapon /swapfile
+grep -qxF '/swapfile none swap sw 0 0' /etc/fstab || \
 echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 
-# 4. bashrc 設定の最適化（tmux等の互換性対応）
-sed -i 's/^[[:space:]]*PS1=/export PS1=/' ~/.bashrc
-sed -i 's/\\[ -z \\\"\\$PS1\\\" \\]/[ -z \"${PS1-}\" ]/' ~/.bashrc
-sed -i 's/\\[ -z \\\"\\$debian_chroot\\\" \\]/[ -z \"${debian_chroot:-}\" ]/' ~/.bashrc
-echo "ulimit -n 65535" >> ~/.bashrc
-source ~/.bashrc
+# 5. bashrc をGitHubから取得して置き換え
+curl -sSfL https://raw.githubusercontent.com/ISI-A-K/gensyn-scripts/main/bashrc_template -o ~/.bashrc
 
-# 5. Gensyn リポジトリのクローン
+# 6. Gensyn リポジトリのクローンと初期化
 cd ~
 git clone https://github.com/gensyn-ai/rl-swarm.git
 cd rl-swarm
 git submodule update --init --recursive
 
-# 6. Python 仮想環境のセットアップ
+# 7. Python 仮想環境のセットアップ
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 pip install protobuf==5.27.5
 pip check
 
-# 7. run_rl_swarm.sh の open を echo に書き換え（非Mac環境向け）
-sed -i 's/open http:\\/\\/localhost:3000/echo \"Server running at http:\\/\\/localhost:3000. Please open this URL in your browser.\"/' run_rl_swarm.sh
+# 8. 修正済み testnet_grpo_runner.py をGitHubから取得して反映
+curl -sSfL https://raw.githubusercontent.com/ISI-A-K/gensyn-scripts/main/testnet_grpo_runner.py -o ~/rl-swarm/hivemind_exp/runner/gensyn/testnet_grpo_runner.py
 
-# 8. 実行方法案内
-echo \"✅ 起動準備完了。以下の手順でノードを起動してください：\"
-echo \"tmux new -s gensyn\"
-echo \"cd ~/rl-swarm\"
-echo \"source .venv/bin/activate\"
-echo \"export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0\"
-echo \"export CPU_ONLY=1\"
-echo \"export CUDA_VISIBLE_DEVICES=\\\"\\\"\"
-echo \"./run_rl_swarm.sh\"
+# 9. run_rl_swarm.sh の表示変更（Mac用 open を除去）
+sed -i 's|open http://localhost:3000|echo '\''Server running at http://localhost:3000. Please open this URL in your browser.'\''|' run_rl_swarm.sh
+
+# 10. 起動案内
+cat <<EOM
+✅ セットアップ完了。以下のコマンドでノードを起動してください：
+
+tmux new -s gensyn
+cd ~/rl-swarm
+source .venv/bin/activate
+export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0
+export CPU_ONLY=1
+export CUDA_VISIBLE_DEVICES=""
+./run_rl_swarm.sh
+
+Cloudflare Tunnel を使うには別ターミナルで：
+cloudflared tunnel --url http://localhost:3000
+EOM
 
 exit 0
