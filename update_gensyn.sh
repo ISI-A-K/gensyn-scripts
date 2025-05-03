@@ -60,7 +60,7 @@ sed -i 's|open http://localhost:3000|echo '\''Server running at http://localhost
 cat <<EOM
 ✅ アップデート完了。以下のコマンドでノードを起動してください：
 
-tmux new -s gensyn
+tmux attach -t gensyn
 cd ~/rl-swarm
 source .venv/bin/activate
 export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0
