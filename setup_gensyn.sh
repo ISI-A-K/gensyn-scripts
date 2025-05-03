@@ -43,8 +43,23 @@ git submodule update --init --recursive
 # 7. Python仮想環境と依存解決
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt || true
-pip install protobuf==5.27.5
+
+# requirements.txt をスクリプト内で作成
+cat > requirements.txt <<EOF
+transformers==4.51.3
+trl==0.17.0
+peft==0.15.2
+torch==2.7.0
+protobuf==5.27.5
+huggingface-hub>=0.24.0
+scipy
+numpy
+datasets
+web3
+hivemind
+EOF
+
+pip install -r requirements.txt
 pip check
 
 # 8. runner.py パッチ（GitHubから取得）

@@ -45,22 +45,38 @@ cp ~/rl-swarm-bak/modal-login-temp-data/*.json ~/rl-swarm/modal-login/temp-data/
 # 6. 仮想環境再構築
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt || true
+
+# 7. requirements.txt の復旧（スクリプト内に明示）
+cat > requirements.txt <<EOF
+transformers==4.51.3
+trl==0.17.0
+peft==0.15.2
+torch==2.7.0
+protobuf==5.27.5
+huggingface-hub>=0.24.0
+scipy
+numpy
+datasets
+web3
+hivemind
+EOF
+
+pip install -r requirements.txt
 pip install protobuf==5.27.5
 pip check
 
-# 7. bashrc, runner.py をGitHubから取得
+# 8. bashrc, runner.py をGitHubから取得
 curl -sSfL https://raw.githubusercontent.com/ISI-A-K/gensyn-scripts/main/bashrc_template -o ~/.bashrc
 curl -sSfL https://raw.githubusercontent.com/ISI-A-K/gensyn-scripts/main/testnet_grpo_runner.py -o ~/rl-swarm/hivemind_exp/runner/gensyn/testnet_grpo_runner.py
 
-# 8. run_rl_swarm.sh の修正
+# 9. run_rl_swarm.sh の修正
 sed -i 's|open http://localhost:3000|echo '\''Server running at http://localhost:3000. Please open this URL in your browser.'\''|' run_rl_swarm.sh
 
-# 9. 起動案内
+# 10. 起動案内
 cat <<EOM
 ✅ アップデート完了。以下のコマンドでノードを起動してください：
 
-tmux attach -t gensyn
+tmux new -s gensyn
 cd ~/rl-swarm
 source .venv/bin/activate
 export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0
