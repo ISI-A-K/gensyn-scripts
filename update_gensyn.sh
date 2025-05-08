@@ -49,11 +49,11 @@ source .venv/bin/activate
 
 # 7. 依存を強制再インストール
 pip install --force-reinstall \
+  protobuf==3.20.3 \
   transformers==4.51.3 \
   trl==0.17.0 \
   peft==0.15.2 \
   torch==2.7.0 \
-  protobuf==5.27.5 \
   huggingface-hub>=0.24.0 \
   scipy numpy datasets web3 hivemind
 pip check
