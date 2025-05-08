@@ -40,26 +40,19 @@ echo "Checking out latest tag: $latest_tag"
 git checkout "tags/$latest_tag" -b "$latest_tag"
 git submodule update --init --recursive
 
-# 7. Python仮想環境と依存解決
+# 7. Python仮想環境と依存解決（冪等性あり）
+rm -rf .venv
 python3 -m venv .venv
 source .venv/bin/activate
 
-# requirements.txt をスクリプト内で作成
-cat > requirements.txt <<EOF
-transformers==4.51.3
-trl==0.17.0
-peft==0.15.2
-torch==2.7.0
-protobuf==5.27.5
-huggingface-hub>=0.24.0
-scipy
-numpy
-datasets
-web3
-hivemind
-EOF
-
-pip install -r requirements.txt
+pip install --force-reinstall \
+  transformers==4.51.3 \
+  trl==0.17.0 \
+  peft==0.15.2 \
+  torch==2.7.0 \
+  protobuf==5.27.5 \
+  huggingface-hub>=0.24.0 \
+  scipy numpy datasets web3 hivemind
 pip check
 
 # 8. runner.py パッチ（GitHubから取得）
@@ -75,7 +68,6 @@ cat <<EOM
 tmux new -s gensyn
 cd ~/rl-swarm
 source .venv/bin/activate
-export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0
 export CPU_ONLY=1
 export CUDA_VISIBLE_DEVICES=""
 ./run_rl_swarm.sh
