@@ -49,7 +49,7 @@ source .venv/bin/activate
 
 # 7. 依存を強制再インストール（torch/hivemind調整）
 pip install --force-reinstall \
-  protobuf==5.27.5 \
+  protobuf==3.20.3 \
   hivemind==1.1.1 \
   transformers==4.51.3 \
   trl==0.17.0 \

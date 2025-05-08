@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =========================================
-# Gensyn Node Setup Script (Auto-Version, CPU-Ready)
+# Gensyn Node Install Script (Fresh Setup)
 # =========================================
 
 # 1. 必要パッケージのインストール
@@ -47,7 +47,7 @@ source .venv/bin/activate
 
 # 8. 依存関係インストール（torchとhivemindバージョンも調整）
 pip install --force-reinstall \
-  protobuf==5.27.5 \
+  protobuf==3.20.3 \
   hivemind==1.1.1 \
   transformers==4.51.3 \
   trl==0.17.0 \
