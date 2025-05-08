@@ -42,27 +42,20 @@ fi
 mkdir -p ~/rl-swarm/modal-login/temp-data
 cp ~/rl-swarm-bak/modal-login-temp-data/*.json ~/rl-swarm/modal-login/temp-data/ 2>/dev/null || true
 
-# 6. 仮想環境再構築
+# 6. 仮想環境再構築（冪等対応）
+rm -rf .venv
 python3 -m venv .venv
 source .venv/bin/activate
 
-# 7. requirements.txt の復旧（スクリプト内に明示）
-cat > requirements.txt <<EOF
-transformers==4.51.3
-trl==0.17.0
-peft==0.15.2
-torch==2.7.0
-protobuf==5.27.5
-huggingface-hub>=0.24.0
-scipy
-numpy
-datasets
-web3
-hivemind
-EOF
-
-pip install -r requirements.txt
-pip install protobuf==5.27.5
+# 7. 依存を強制再インストール
+pip install --force-reinstall \
+  transformers==4.51.3 \
+  trl==0.17.0 \
+  peft==0.15.2 \
+  torch==2.7.0 \
+  protobuf==5.27.5 \
+  huggingface-hub>=0.24.0 \
+  scipy numpy datasets web3 hivemind
 pip check
 
 # 8. bashrc, runner.py をGitHubから取得
@@ -74,12 +67,14 @@ sed -i 's|open http://localhost:3000|echo '\''Server running at http://localhost
 
 # 10. 起動案内
 cat <<EOM
-✅ アップデート完了。以下のコマンドでノードを起動してください：
+✅ アップデート完了。以下のコマンドでノードを再起動してください：
 
-tmux new -s gensyn
+tmux attach -t gensyn  # セッションが残っている場合はこちら
+# または
+tmux new -s gensyn      # 新規に立ち上げたい場合はこちら
+
 cd ~/rl-swarm
 source .venv/bin/activate
-export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0
 export CPU_ONLY=1
 export CUDA_VISIBLE_DEVICES=""
 ./run_rl_swarm.sh
