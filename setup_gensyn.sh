@@ -45,24 +45,30 @@ rm -rf .venv
 python3 -m venv .venv
 source .venv/bin/activate
 
+# 8. requirements.txt が無ければ取得
+[ -f requirements.txt ] || \
+curl -sSfL https://raw.githubusercontent.com/gensyn-ai/rl-swarm/main/requirements.txt -o requirements.txt
+
+# 9. 依存関係インストール（torchとhivemindバージョンも調整）
 pip install --force-reinstall \
-  protobuf==3.20.3 \
+  protobuf==5.27.5 \
+  hivemind==1.1.1 \
   transformers==4.51.3 \
   trl==0.17.0 \
   peft==0.15.2 \
-  torch==2.7.0 \
+  torch==2.6.0 \
   huggingface-hub>=0.24.0 \
-  scipy numpy datasets web3 hivemind
+  scipy numpy datasets web3
 pip check
 
-# 8. runner.py パッチ（GitHubから取得）
+# 10. runner.py パッチ（GitHubから取得）
 curl -sSfL https://raw.githubusercontent.com/ISI-A-K/gensyn-scripts/main/testnet_grpo_runner.py -o ~/rl-swarm/hivemind_exp/runner/gensyn/testnet_grpo_runner.py
 
-# 9. run_rl_swarm.sh の修正（不要な pip install を無効化）
+# 11. run_rl_swarm.sh の修正（不要な pip install を無効化）
 sed -i '/pip install/d' ~/rl-swarm/run_rl_swarm.sh
 sed -i 's|open http://localhost:3000|echo '\''Server running at http://localhost:3000. Please open this URL in your browser.'\''|' run_rl_swarm.sh
 
-# 10. 案内表示
+# 12. 案内表示
 cat <<EOM
 ✅ セットアップ完了。以下のコマンドでノードを起動してください：
 
