@@ -42,33 +42,28 @@ fi
 mkdir -p ~/rl-swarm/modal-login/temp-data
 cp ~/rl-swarm-bak/modal-login-temp-data/*.json ~/rl-swarm/modal-login/temp-data/ 2>/dev/null || true
 
-# 6. 仮想環境再構築（冪等対応）
+# 6. 仮想環境再構築と requirements-cpu.txt の読み込み
 rm -rf .venv
 python3 -m venv .venv
 source .venv/bin/activate
 
-# 7. 依存を強制再インストール（torch/hivemind調整）
-pip install --force-reinstall \
+pip install --upgrade pip
+pip install -r requirements-cpu.txt
+pip install \
+  numpy==1.24.3 \
   protobuf==3.20.3 \
-  pydantic==1.10.12 \
-  hivemind==1.1.1 \
-  transformers==4.51.3 \
-  trl==0.17.0 \
-  peft==0.15.2 \
-  torch==2.1.0 \
-  huggingface-hub\>=0.24.0 \
-  scipy numpy==1.24.3 datasets web3
+  pydantic==1.10.12
 pip check
 
-# 8. bashrc, runner.py をGitHubから取得
+# 7. bashrc, runner.py をGitHubから取得
 curl -sSfL https://raw.githubusercontent.com/ISI-A-K/gensyn-scripts/main/bashrc_template -o ~/.bashrc
 curl -sSfL https://raw.githubusercontent.com/ISI-A-K/gensyn-scripts/main/testnet_grpo_runner.py -o ~/rl-swarm/hivemind_exp/runner/gensyn/testnet_grpo_runner.py
 
-# 9. run_rl_swarm.sh の修正（不要な pip install を無効化）
+# 8. run_rl_swarm.sh の修正
 sed -i '/pip install/d' ~/rl-swarm/run_rl_swarm.sh
 sed -i 's|open http://localhost:3000|echo '\''Server running at http://localhost:3000. Please open this URL in your browser.'\''|' run_rl_swarm.sh
 
-# 10. 起動案内（再接続推奨）
+# 9. 案内表示
 cat <<EOM
 ✅ アップデート完了。以下のコマンドでノードを再起動してください：
 

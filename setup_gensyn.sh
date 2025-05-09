@@ -40,32 +40,31 @@ echo "Checking out latest tag: $latest_tag"
 git checkout "tags/$latest_tag" -b "$latest_tag"
 git submodule update --init --recursive
 
-# 7. Python仮想環境と依存解決（冪等性あり）
+# 7. Python仮想環境と依存解決（requirementsを直接使用）
 rm -rf .venv
 python3 -m venv .venv
 source .venv/bin/activate
 
-# 8. 依存関係インストール（torchとhivemindバージョンも調整）
-pip install --force-reinstall \
+# CPU用のrequirementsを利用してインストール
+pip install --upgrade pip
+pip install -r requirements-cpu.txt
+
+# 追加で互換性のあるバージョンで上書き（必要な固定）
+pip install \
+  numpy==1.24.3 \
   protobuf==3.20.3 \
-  pydantic==1.10.12 \
-  hivemind==1.1.1 \
-  transformers==4.51.3 \
-  trl==0.17.0 \
-  peft==0.15.2 \
-  torch==2.1.0 \
-  huggingface-hub\>=0.24.0 \
-  scipy numpy==1.24.3 datasets web3
+  pydantic==1.10.12
+
 pip check
 
-# 9. runner.py パッチ（GitHubから取得）
+# 8. runner.py パッチ（GitHubから取得）
 curl -sSfL https://raw.githubusercontent.com/ISI-A-K/gensyn-scripts/main/testnet_grpo_runner.py -o ~/rl-swarm/hivemind_exp/runner/gensyn/testnet_grpo_runner.py
 
-# 10. run_rl_swarm.sh の修正（不要な pip install を無効化）
+# 9. run_rl_swarm.sh の修正（不要な pip install を無効化）
 sed -i '/pip install/d' ~/rl-swarm/run_rl_swarm.sh
 sed -i 's|open http://localhost:3000|echo '\''Server running at http://localhost:3000. Please open this URL in your browser.'\''|' run_rl_swarm.sh
 
-# 11. 案内表示
+# 10. 案内表示
 cat <<EOM
 ✅ セットアップ完了。以下のコマンドでノードを起動してください：
 
