@@ -49,14 +49,14 @@ source .venv/bin/activate
 
 # 7. 依存を強制再インストール（torch/hivemind調整）
 pip install --force-reinstall \
-  protobuf==5.27.5 \
+  protobuf==3.20.3 \
   hivemind==1.1.1 \
   transformers==4.51.3 \
   trl==0.17.0 \
   peft==0.15.2 \
   torch==2.1.0 \
   huggingface-hub\>=0.24.0 \
-  scipy numpy datasets web3
+  scipy numpy==1.24.3 datasets web3
 pip check
 
 # 8. bashrc, runner.py をGitHubから取得

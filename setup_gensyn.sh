@@ -54,7 +54,7 @@ pip install --force-reinstall \
   peft==0.15.2 \
   torch==2.1.0 \
   huggingface-hub\>=0.24.0 \
-  scipy numpy datasets web3
+  scipy numpy==1.24.3 datasets web3
 pip check
 
 # 9. runner.py パッチ（GitHubから取得）
