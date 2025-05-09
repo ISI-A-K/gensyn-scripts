@@ -52,8 +52,9 @@ pip install --force-reinstall \
   transformers==4.51.3 \
   trl==0.17.0 \
   peft==0.15.2 \
-  torch==2.6.0 \
-  huggingface-hub>=0.24.0 \
+  torch==2.1.0 \
+  torchvision==0.14.1 \
+  huggingface-hub\>=0.24.0 \
   scipy numpy datasets web3
 pip check
 
@@ -80,4 +81,3 @@ cloudflared tunnel --url http://localhost:3000
 EOM
 
 exit 0
-
