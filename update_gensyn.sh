@@ -55,7 +55,6 @@ pip install --force-reinstall \
   trl==0.17.0 \
   peft==0.15.2 \
   torch==2.1.0 \
-  torchvision==0.14.1 \
   huggingface-hub\>=0.24.0 \
   scipy numpy datasets web3
 pip check
