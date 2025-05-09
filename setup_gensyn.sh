@@ -48,6 +48,7 @@ source .venv/bin/activate
 # 8. 依存関係インストール（torchとhivemindバージョンも調整）
 pip install --force-reinstall \
   protobuf==3.20.3 \
+  pydantic==1.10.12 \
   hivemind==1.1.1 \
   transformers==4.51.3 \
   trl==0.17.0 \
