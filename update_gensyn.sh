@@ -51,7 +51,7 @@ pip install --upgrade pip
 pip install -r requirements-cpu.txt
 pip install \
   numpy==1.24.3 \
-  protobuf==3.20.3 \
+  protobuf==5.29.0 \
   pydantic==1.10.12
 pip check
 
