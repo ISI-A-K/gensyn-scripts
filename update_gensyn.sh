@@ -57,7 +57,18 @@ pip install \
   pydantic==2.11.4
 pip check
 
-# 7. modal-login のビルド処理は run_rl_swarm.sh に委ねるためスキップ
+# 7. modal-login の依存とビルドを再実行
+cd modal-login
+rm -f package-lock.json
+rm -rf node_modules
+sudo npm uninstall -g yarn || true
+sudo npm install -g yarn
+
+yarn install
+yarn upgrade
+yarn add next@14 viem@latest encoding pino-pretty
+yarn build
+cd ..
 
 # 8. bashrc, runner.py の取得
 curl -sSfL https://raw.githubusercontent.com/ISI-A-K/gensyn-scripts/main/bashrc_template -o ~/.bashrc
