@@ -27,15 +27,10 @@ echo "最新タグに切り替え: $latest_tag"
 git checkout "tags/$latest_tag" -b "$latest_tag"
 git submodule update --init --recursive
 
-# 3. Node.js & yarn の確認
+# 3. Node.js の確認
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
 node -v
-
-if ! command -v yarn &> /dev/null; then
-    echo "Yarnが見つかりません。インストールします..."
-    npm install -g yarn
-fi
 
 # 4. swarm.pem の復元
 if [ -f ~/rl-swarm-bak/swarm.pem ]; then
@@ -66,7 +61,7 @@ pip check
 cd modal-login
 yarn install
 yarn upgrade
-yarn add next@latest viem@latest
+yarn add next@14 viem@latest encoding pino-pretty
 yarn build
 cd ..
 
