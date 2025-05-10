@@ -57,13 +57,7 @@ pip install \
   pydantic==2.11.4
 pip check
 
-# 7. modal-login の依存アップグレードとビルド
-cd modal-login
-yarn install
-yarn upgrade
-yarn add next@14 viem@latest encoding pino-pretty
-yarn build
-cd ..
+# 7. modal-login のビルド処理は run_rl_swarm.sh に委ねるためスキップ
 
 # 8. bashrc, runner.py の取得
 curl -sSfL https://raw.githubusercontent.com/ISI-A-K/gensyn-scripts/main/bashrc_template -o ~/.bashrc

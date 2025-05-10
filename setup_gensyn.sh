@@ -55,13 +55,7 @@ pip install \
   pydantic==2.11.4
 pip check
 
-# 8. modal-login の依存解決とビルド
-cd modal-login
-yarn install
-yarn upgrade
-yarn add next@14 viem@latest encoding pino-pretty
-yarn build
-cd ..
+# 8. modal-login のビルド処理は run_rl_swarm.sh に委ねるためスキップ
 
 # 9. runner.py パッチ（GitHubから取得）
 curl -sSfL https://raw.githubusercontent.com/ISI-A-K/gensyn-scripts/main/testnet_grpo_runner.py -o ~/rl-swarm/hivemind_exp/runner/gensyn/testnet_grpo_runner.py
