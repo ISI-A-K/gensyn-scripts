@@ -4,6 +4,8 @@
 # Gensyn Node Install Script (Fresh Setup)
 # =========================================
 
+set -e
+
 # 1. 必要パッケージのインストール
 sudo apt update && sudo apt install -y \
   git python3 python3-pip python3-venv curl tmux build-essential nodejs
@@ -13,13 +15,19 @@ curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
 node -v
 
-# 3. Cloudflared のインストール（GUIログイン用）
+# 3. yarn のインストール（未導入であれば）
+if ! command -v yarn &> /dev/null; then
+    echo "Yarnが見つかりません。インストールします..."
+    npm install -g yarn
+fi
+
+# 4. Cloudflared のインストール（GUIログイン用）
 curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared
 chmod +x cloudflared
 sudo mv cloudflared /usr/local/bin/
 cloudflared --version
 
-# 4. Swap（8GB）設定（必要に応じて）
+# 5. Swap（8GB）設定（必要に応じて）
 sudo fallocate -l 8G /swapfile
 sudo chmod 600 /swapfile
 sudo mkswap /swapfile
@@ -27,44 +35,48 @@ sudo swapon /swapfile
 grep -qxF '/swapfile none swap sw 0 0' /etc/fstab || \
 echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 
-# 5. bashrc をテンプレートから取得
+# 6. bashrc をテンプレートから取得
 curl -sSfL https://raw.githubusercontent.com/ISI-A-K/gensyn-scripts/main/bashrc_template -o ~/.bashrc
 
-# 6. Gensynリポジトリの取得 + 最新タグへ切り替え
+# 7. Gensynリポジトリの取得 + 最新タグへ切り替え
 cd ~
 git clone https://github.com/gensyn-ai/rl-swarm.git
 cd rl-swarm
 git fetch --tags
 latest_tag=$(git tag --sort=-v:refname | head -n 1)
-echo "Checking out latest tag: $latest_tag"
+echo "最新タグに切り替え: $latest_tag"
 git checkout "tags/$latest_tag" -b "$latest_tag"
 git submodule update --init --recursive
 
-# 7. Python仮想環境と依存解決（requirementsを直接使用）
+# 8. Python仮想環境と依存解決
 rm -rf .venv
 python3 -m venv .venv
 source .venv/bin/activate
 
-# CPU用のrequirementsを利用してインストール
 pip install --upgrade pip
 pip install -r requirements-cpu.txt
-
-# 追加で互換性のあるバージョンで上書き（必要な固定）
 pip install \
   numpy==1.24.3 \
   protobuf==5.29.0 \
   pydantic==2.11.4
-
 pip check
 
-# 8. runner.py パッチ（GitHubから取得）
+# 9. modal-login の依存解決とビルド
+cd modal-login
+yarn install
+yarn upgrade
+yarn add next@latest viem@latest
+yarn build
+cd ..
+
+# 10. runner.py パッチ（GitHubから取得）
 curl -sSfL https://raw.githubusercontent.com/ISI-A-K/gensyn-scripts/main/testnet_grpo_runner.py -o ~/rl-swarm/hivemind_exp/runner/gensyn/testnet_grpo_runner.py
 
-# 9. run_rl_swarm.sh の修正（不要な pip install を無効化）
+# 11. run_rl_swarm.sh の修正（不要な pip install を無効化）
 sed -i '/pip install/d' ~/rl-swarm/run_rl_swarm.sh
 sed -i 's|open http://localhost:3000|echo '\''Server running at http://localhost:3000. Please open this URL in your browser.'\''|' run_rl_swarm.sh
 
-# 10. 案内表示
+# 12. 案内表示
 cat <<EOM
 ✅ セットアップ完了。以下のコマンドでノードを起動してください：
 
